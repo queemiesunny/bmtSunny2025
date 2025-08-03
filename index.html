@@ -14,22 +14,22 @@
 <body>
   <h2>Sunny晴天羽伴報名羽球表單</h2>
   <form id="signup-form">
-    <label>
+    <label for="name">
       Name姓名：
-      <input type="text" name="name" required />
+      <input type="text" id="name" name="name" required />
     </label>
-    <label>
+    <label for="lineid">
       Line ID：
-      <input type="text" name="lineid" required />
+      <input type="text" id="lineid" name="lineid" required />
     </label>
-    <label>
+    <label for="date">
       Time日期場次：
-      <select name="date" required>
+      <select id="date" name="date" required>
         <option value="">請選擇</option>
-        <option value="9/3 (三) 19:00–21:00">9/3 (三) 19:00–21:00</option>
-        <option value="9/10 (三) 19:00–21:00">9/10 (三) 19:00–21:00</option>
-        <option value="9/17 (三) 19:00–21:00">9/17 (三) 19:00–21:00</option>
-        <option value="9/24 (三) 19:00–21:00">9/24 (三) 19:00–21:00</option>
+        <option value="9/3(三)19:00-21:00">9/3 (三) 19:00–21:00</option>
+        <option value="9/10(三)19:00-21:00">9/10 (三) 19:00–21:00</option>
+        <option value="9/17(三)19:00-21:00">9/17 (三) 19:00–21:00</option>
+        <option value="9/24(三)19:00-21:00">9/24 (三) 19:00–21:00</option>
       </select>
     </label>
     <button type="submit">送出報名</button>
@@ -39,26 +39,33 @@
   <script>
     const form = document.getElementById('signup-form');
     const msg = document.getElementById('message');
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzumgrOSCWMtsz_VUrLgiHVmQ82hF18qhx0nWXgpfk4uT_eCU99o0sVf9DRGeGdxmFx/exec'; // ← 請替換為你的 Apps Script 網址
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzumgrOSCWMtsz_VUrLgiHVmQ82hF18qhx0nWXgpfk4uT_eCU99o0sVf9DRGeGdxmFx/exec';
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+
       const formData = new FormData(form);
       const params = new URLSearchParams(formData);
 
-      const response = await fetch(scriptURL, {
-        method: 'POST',
-        body: params
-      });
+      try {
+        const response = await fetch(scriptURL, {
+          method: 'POST',
+          body: params
+        });
 
-      const text = await response.text();
-      if (text === 'OK') {
-        msg.textContent = '報名成功！期待你一起來揮汗打球～🏸 有事記得提前說聲唷 🙌';
-        form.reset();
-      } else if (text === 'DUPLICATE') {
-        msg.textContent = '你已經報名過這個場次囉 🙋‍♂️ 若要更改，請聯絡管理員。';
-      } else {
-        msg.textContent = '發生錯誤，請稍後再試一次 🙇';
+        const text = await response.text();
+
+        if (text === 'OK') {
+          msg.textContent = '報名成功！期待你一起來揮汗打球～🏸 有事記得提前說聲唷 🙌';
+          form.reset();
+        } else if (text === 'DUPLICATE') {
+          msg.textContent = '你已經報名過這個場次囉 🙋‍♂️ 若要更改，請聯絡管理員。';
+        } else {
+          msg.textContent = '發生錯誤，請稍後再試一次 🙇';
+        }
+      } catch (error) {
+        msg.textContent = '連線錯誤，請稍後再試 🙇';
+        console.error('錯誤：', error);
       }
     });
   </script>
