@@ -17,7 +17,8 @@
     <label for="name">
       Name姓名：
       <input type="text" id="name" name="name" required />
-   
+    </label>
+
     <label for="date">
       Time日期場次：
       <select id="date" name="date" required>
@@ -28,11 +29,12 @@
         <option value="9/24(三)19:00-21:00">9/24 (三) 19:00–21:00</option>
       </select>
     </label>
-    </label>
+
     <label for="lineid">
       Line ID：
       <input type="text" id="lineid" name="lineid" required />
     </label>
+
     <button type="submit">送出報名</button>
     <div class="msg" id="message"></div>
   </form>
@@ -44,7 +46,6 @@
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-
       const formData = new FormData(form);
       const params = new URLSearchParams(formData);
 
@@ -55,7 +56,6 @@
         });
 
         const text = await response.text();
-
         if (text === 'OK') {
           msg.textContent = '報名成功！期待你一起來揮汗打球～🏸 有事記得提前說聲唷 🙌';
           form.reset();
