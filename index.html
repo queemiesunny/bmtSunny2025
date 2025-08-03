@@ -6,6 +6,7 @@
   <style>
     body { font-family: sans-serif; padding: 2em; max-width: 500px; margin: auto; }
     label { display: block; margin-top: 1em; }
+    input, select { width: 100%; padding: 0.5em; margin-top: 0.5em; }
     button { margin-top: 1.5em; padding: 0.5em 1em; }
     .msg { margin-top: 1em; font-weight: bold; }
   </style>
@@ -17,9 +18,9 @@
       Name姓名：
       <input type="text" name="name" required />
     </label>
-        <label>
+    <label>
       Line ID：
-      <input type="text" name="name" required />
+      <input type="text" name="lineid" required />
     </label>
     <label>
       Time日期場次：
@@ -38,7 +39,7 @@
   <script>
     const form = document.getElementById('signup-form');
     const msg = document.getElementById('message');
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzumgrOSCWMtsz_VUrLgiHVmQ82hF18qhx0nWXgpfk4uT_eCU99o0sVf9DRGeGdxmFx/exec'; // ← 改成你的 Web App URL
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzumgrOSCWMtsz_VUrLgiHVmQ82hF18qhx0nWXgpfk4uT_eCU99o0sVf9DRGeGdxmFx/exec'; // ← 請替換為你的 Apps Script 網址
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -55,7 +56,7 @@
         msg.textContent = '報名成功！期待你一起來揮汗打球～🏸 有事記得提前說聲唷 🙌';
         form.reset();
       } else if (text === 'DUPLICATE') {
-        msg.textContent = '你已經報名過這個場次囉 🙋‍♂️ 若要更改，請聯絡Sunny。';
+        msg.textContent = '你已經報名過這個場次囉 🙋‍♂️ 若要更改，請聯絡管理員。';
       } else {
         msg.textContent = '發生錯誤，請稍後再試一次 🙇';
       }
