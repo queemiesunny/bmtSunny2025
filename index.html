@@ -1,36 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <title>羽球報名</title>
+  <title>羽球報名表單</title>
   <style>
-    /* Loading 遮罩 */
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input, button {
+      margin-top: 5px;
+    }
+    #message {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    /* loading 動畫 */
     #loading {
       display: none;
-      position: fixed;
-      z-index: 999;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.7);
-      justify-content: center;
-      align-items: center;
-      font-size: 20px;
-      color: #333;
+      margin-top: 15px;
     }
-
-    /* 轉圈圈動畫 */
     .spinner {
-      border: 6px solid #f3f3f3;
-      border-top: 6px solid #3498db;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
+      width: 24px;
+      height: 24px;
       animation: spin 1s linear infinite;
-      margin-right: 10px;
+      margin: auto;
     }
-
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
@@ -40,48 +42,61 @@
 <body>
   <h2>羽球報名表單</h2>
   <form id="signupForm">
-    姓名：<input type="text" id="name" name="name" required><br><br>
-    日期：<input type="text" id="date" name="date" required><br><br>
-    Line ID：<input type="text" id="lineid" name="lineid"><br><br>
-    <button type="submit">送出</button>
+    <label>姓名：
+      <input type="text" id="name" name="name" required>
+    </label>
+    <label>日期：
+      <input type="date" id="date" name="date" required>
+    </label>
+    <label>Line ID：
+      <input type="text" id="lineid" name="lineid" required>
+    </label>
+    <button type="submit">送出報名</button>
   </form>
 
-  <!-- Loading 提示 -->
-  <div id="loading">
-    <div class="spinner"></div>
-    <span>資料送出中，請稍候...</span>
-  </div>
+  <!-- loading & 訊息 -->
+  <div id="loading"><div class="spinner"></div><p>資料傳送中...</p></div>
+  <div id="message"></div>
 
   <script>
-    const scriptUrl = "【你的 Apps Script 網址貼在這裡】";
+    const form = document.getElementById('signupForm');
+    const loading = document.getElementById('loading');
+    const message = document.getElementById('message');
 
-    document.getElementById("signupForm").addEventListener("submit", function(e) {
+    form.addEventListener('submit', function(e) {
       e.preventDefault();
 
       // 顯示 loading
-      document.getElementById("loading").style.display = "flex";
+      loading.style.display = 'block';
+      message.innerText = '';
 
-      const formData = new FormData(this);
-      fetch(scriptUrl, { method: "POST", body: formData })
-        .then(response => response.text())
-        .then(result => {
-          // 隱藏 loading
-          document.getElementById("loading").style.display = "none";
+      const formData = new FormData(form);
 
-          if (result === "OK") {
-            alert("報名成功！");
-            document.getElementById("signupForm").reset();
-          } else if (result === "DUPLICATE") {
-            alert("已經報名過囉！");
-          } else {
-            alert("發生錯誤，請再試一次。");
-          }
-        })
-        .catch(error => {
-          // 隱藏 loading
-          document.getElementById("loading").style.display = "none";
-          alert("傳送失敗：" + error);
-        });
+      fetch("https://script.google.com/macros/s/AKfycbzumgrOSCWMtsz_VUrLgiHVmQ82hF18qhx0nWXgpfk4uT_eCU99o0sVf9DRGeGdxmFx/exec", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.text())
+      .then(text => {
+        loading.style.display = 'none';
+        if (text === "OK") {
+          message.style.color = "green";
+          message.innerText = "報名成功 ✅";
+          form.reset();
+        } else if (text === "DUPLICATE") {
+          message.style.color = "red";
+          message.innerText = "重複報名 ⚠️";
+        } else {
+          message.style.color = "orange";
+          message.innerText = "未知錯誤，請稍後再試";
+        }
+      })
+      .catch(err => {
+        loading.style.display = 'none';
+        message.style.color = "red";
+        message.innerText = "傳送失敗，請檢查網路連線";
+        console.error(err);
+      });
     });
   </script>
 </body>
