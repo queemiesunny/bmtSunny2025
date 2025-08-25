@@ -1,9 +1,10 @@
-<!DOCTYPE html>
+我目前的長這樣，請直接幫我插入或修改：<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <title>羽球報名表單</title>
-  <style>
+  <meta charset="UTF-8" />
+  <title>Sunny晴天羽伴報名羽球表單</title>
+
+<style>
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
@@ -38,63 +39,65 @@
       100% { transform: rotate(360deg); }
     }
   </style>
+
 </head>
 <body>
-  <h2>羽球報名表單</h2>
-  <form id="signupForm">
-    <label>姓名：
-      <input type="text" id="name" name="name" required>
+  <h2>Sunny晴天羽伴報名羽球表單</h2>
+  <form id="signup-form">
+    <label for="name">
+      Name姓名：
+      <input type="text" id="name" name="name" required />
     </label>
-    <label>日期：
-      <input type="date" id="date" name="date" required>
+
+    <label for="date">
+      Time日期場次：
+      <select id="date" name="date" required>
+        <option value="">請選擇</option>
+        <option value="9/3(三)19:00-21:00">9/3 (三) 19:00–21:00</option>
+        <option value="9/10(三)19:00-21:00">9/10 (三) 19:00–21:00</option>
+        <option value="9/17(三)19:00-21:00">9/17 (三) 19:00–21:00</option>
+        <option value="9/24(三)19:00-21:00">9/24 (三) 19:00–21:00</option>
+      </select>
     </label>
-  
-    <button type="submit">送出報名</button>
+
+    <button type="submit">送出報名
   </form>
+
+</form>
 
   <!-- loading & 訊息 -->
   <div id="loading"><div class="spinner"></div><p>資料傳送中...</p></div>
   <div id="message"></div>
 
   <script>
-    const form = document.getElementById('signupForm');
-    const loading = document.getElementById('loading');
-    const message = document.getElementById('message');
+    const form = document.getElementById('signup-form');
+    const msg = document.getElementById('message');
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzumgrOSCWMtsz_VUrLgiHVmQ82hF18qhx0nWXgpfk4uT_eCU99o0sVf9DRGeGdxmFx/exec';
 
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-
-      // 顯示 loading
-      loading.style.display = 'block';
-      message.innerText = '';
-
       const formData = new FormData(form);
+      const params = new URLSearchParams(formData);
 
-      fetch("https://script.google.com/macros/s/AKfycbzumgrOSCWMtsz_VUrLgiHVmQ82hF18qhx0nWXgpfk4uT_eCU99o0sVf9DRGeGdxmFx/exec", {
-        method: "POST",
-        body: formData
-      })
-      .then(res => res.text())
-      .then(text => {
-        loading.style.display = 'none';
-        if (text === "OK") {
-          message.style.color = "green";
-          message.innerText = "報名成功 ✅";
+      try {
+        const response = await fetch(scriptURL, {
+          method: 'POST',
+          body: params
+        });
+
+        const text = await response.text();
+        if (text === 'OK') {
+          msg.textContent = '報名成功！期待你一起來揮汗打球～🏸 有事記得提前說聲唷 🙌';
           form.reset();
-        } else if (text === "DUPLICATE") {
-          message.style.color = "red";
-          message.innerText = "重複報名 ⚠️";
+        } else if (text === 'DUPLICATE') {
+          msg.textContent = '你已經報名過這個場次囉 🙋‍♂️ 若要更改，請聯絡管理員。';
         } else {
-          message.style.color = "orange";
-          message.innerText = "未知錯誤，請稍後再試";
+          msg.textContent = '發生錯誤，請稍後再試一次 🙇';
         }
-      })
-      .catch(err => {
-        loading.style.display = 'none';
-        message.style.color = "red";
-        message.innerText = "傳送失敗，請檢查網路連線";
-        console.error(err);
-      });
+      } catch (error) {
+        msg.textContent = '連線錯誤，請稍後再試 🙇';
+        console.error('錯誤：', error);
+      }
     });
   </script>
 </body>
