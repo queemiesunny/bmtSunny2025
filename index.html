@@ -102,49 +102,47 @@
   </form>
 
   <!-- loading & 訊息 -->
-  <div id="loading"><div class="spinner"></div><p>資料傳送中...</p></div>
-  <div id="message"></div>
 
-  <script>
-    const form = document.getElementById('signupForm');
-    const loading = document.getElementById('loading');
-    const message = document.getElementById('message');
+<script>
+  const form = document.getElementById('signup-form');
+  const loading = document.getElementById('loading');
+  const message = document.getElementById('message');
 
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
 
-      // 顯示 loading
-      loading.style.display = 'block';
-      message.innerText = '';
+    // 顯示 loading
+    loading.style.display = 'block';
+    message.innerText = '';
 
-      const formData = new FormData(form);
+    const formData = new FormData(form);
 
-      fetch("YOUR_SCRIPT_URL", {
-        method: "POST",
-        body: formData
-      })
-      .then(res => res.text())
-      .then(text => {
-        loading.style.display = 'none';
-        if (text === "OK") {
-          message.style.color = "green";
-          message.innerText = "報名成功 ✅期待你一起來揮汗打球～🏸 有事記得提前說聲唷 🙌";
-          form.reset();
-        } else if (text === "DUPLICATE") {
-          message.style.color = "red";
-          message.innerText = "重複報名 ⚠️";
-        } else {
-          message.style.color = "orange";
-          message.innerText = "未知錯誤，請稍後再試";
-        }
-      })
-      .catch(err => {
-        loading.style.display = 'none';
+    fetch("https://script.google.com/macros/s/你的WebApp網址/exec", {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.text())
+    .then(text => {
+      loading.style.display = 'none';
+      if (text === "OK") {
+        message.style.color = "green";
+        message.innerText = "報名成功 ✅ 期待你一起來揮汗打球～🏸";
+        form.reset();
+      } else if (text === "DUPLICATE") {
         message.style.color = "red";
-        message.innerText = "傳送失敗，請檢查網路連線";
-        console.error(err);
-      });
+        message.innerText = "重複報名 ⚠️";
+      } else {
+        message.style.color = "orange";
+        message.innerText = "未知錯誤，請稍後再試";
+      }
+    })
+    .catch(err => {
+      loading.style.display = 'none';
+      message.style.color = "red";
+      message.innerText = "傳送失敗，請檢查網路連線";
+      console.error(err);
     });
-  </script>
+  });
+</script>
 </body>
 </html>
